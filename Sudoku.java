@@ -15,11 +15,11 @@ public class Sudoku {
 			for(int times=0;times<problem;times++) {
 				int[][] prob=new int[9][9];
 				for(int i=0;i<rank;i++) {
+					String toint=bw.readLine();
+					String str = toint.replaceAll(" ","");
 					for(int j=0;j<rank;j++) {
-						prob[i][j]=bw.read()-48;
-						bw.read();
+						prob[i][j]=Integer.valueOf(str.charAt(j)).intValue()-48;
 					}
-					bw.readLine();
 				}
 				bw.readLine();
 				problems.add(prob);
@@ -76,7 +76,7 @@ public class Sudoku {
 			x=numX[count];
 			y=numY[count];
 			int i=numNow[count]+1;
-			for(;i<10;i++) {
+			for(;i<=rank;i++) {
 				result[x][y]=i;
 				if(test(result,x,y,rank)) {//替换成功
 					numNow[count]=i; 
@@ -88,7 +88,7 @@ public class Sudoku {
 					break;
 				}
 			}
-			if(i==10) {
+			if(i==rank+1) {
 				for(int clear=count;clear<tosolve;clear++) {//错误清除之后所有改变的项
 					int changedx=numX[clear];
 					int changedy=numY[clear];
@@ -102,6 +102,9 @@ public class Sudoku {
 	public static boolean test(int[][] problem,int x,int y,int rank) {
 		int flagx=0;
 		int flagy=0;
+		int xr=0;
+		int yr=0;
+		int flagr=0;
 		for(int i=0;i<rank;i++) {//行测试
 			if(problem[x][y]==problem[i][y]) {
 				flagx++;
@@ -118,7 +121,37 @@ public class Sudoku {
 		if(flagy==2) {
 			return false;
 		}
-		//TODO 宫测试
+		switch(rank) {//宫测试初始化
+			case 4:
+				xr=2;
+				yr=2;
+				break;
+			case 6:
+				xr=2;
+				yr=3;
+				break;
+			case 8:
+				xr=4;
+				yr=2;
+				break;
+			case 9:
+				xr=3;
+				yr=3;
+				break;
+			default:
+ 		}
+		if(xr!=0) {//宫测试
+			for(int i=x-x%xr;i<x+xr-x%xr;i++) {
+				for(int j=y-y%yr;j<y+yr-y%yr;j++) {
+					if(problem[x][y]==problem[i][j]) {
+						flagr++;
+					}
+				}
+			}
+			if(flagr==2) {
+				return false;
+			}
+		}
 		return true;
 	}
 	public static void log(int[][] result) {
